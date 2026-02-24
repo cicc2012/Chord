@@ -12,7 +12,7 @@ Key Features to Demonstrate
 
 
 ## Big Picture Architecture
-
+```
 ┌─────────────────────────────────────────────────────────┐
 │              Client Application Layer                   │
 │  (Document operations: create, share, query metadata)   │
@@ -20,22 +20,22 @@ Key Features to Demonstrate
              │
 ┌────────────▼────────────────────────────────────────────┐
 │              Chord Ring (VirtualBox VMs)                │
-│  ┌──────┐      ┌──────┐      ┌──────┐      ┌──────┐   │
+│  ┌──────┐       ┌──────┐      ┌──────┐       ┌──────┐   │
 │  │Node 1│─────▶│Node 2│─────▶│Node 3│─────▶│Node 4│   │
-│  │ ID:5 │      │ID:15 │      │ID:30 │      │ID:50 │   │
-│  └───┬──┘      └───┬──┘      └───┬──┘      └───┬──┘   │
-│      │             │              │              │       │
-│      └─────────────┴──────────────┴──────────────┘       │
-│           (Finger tables for O(log N) lookup)            │
-└──────────────────────────────────────────────────────────┘
+│  │ ID:5 │       │ID:15 │      │ID:30 │       │ID:50 │   │
+│  └───┬──┘       └───┬──┘      └───┬──┘       └───┬──┘   │
+│      │             │              │              │      │
+│      └─────────────┴──────────────┴──────────────┘      │
+│           (Finger tables for O(log N) lookup)           │
+└─────────────────────────────────────────────────────────┘
              │
-┌────────────▼────────────────────────────────────────────┐
-│                  Storage Layer                           │
+┌────────────▼───────────────────────────────────────────┐
+│                  Storage Layer                         │
 │  Key: hash(doc_id) → Value: {metadata JSON}            │
 └────────────────────────┬───────────────────────────────┘
                          │
 ┌────────────────────────┴────────────────────────────────────────────┐
-│                    Network Layer (NAT Network)                       │
+│                    Network Layer (NAT Network)                      │
 │  Multi-Host Support | Port Forwarding | School Network Safe         │
 └─────────────────────────────────────────────────────────────────────┘
 ```
@@ -420,17 +420,17 @@ Here it's running in blocked mode: to terminate, just press Ctrl+C on your keybo
 
 The general components of the program on each VM are:
 ```
-┌─────────────────────────────────────────────────────────┐
-│                    VM: chord-node1                       │
-├─────────────────────────────────────────────────────────┤
-│                                                          │
-│  $ python3 chord_node_nat_network.py node1              │
-│                                                          │
-│  This single Python process contains:                   │
+┌────────────────────────────────────────────────────────┐
+│                    VM: chord-node1                     │
+├────────────────────────────────────────────────────────┤
+│                                                        │
+│  $ python3 chord_node_nat_network.py node1             │
+│                                                        │
+│  This single Python process contains:                  │
 │  ┌────────────────────────────────────────────────┐    │
 │  │  Flask Web Server (HTTP Server)                │    │
-│  │  Listens on: 0.0.0.0:5000                     │    │
-│  │  Handles: /store, /retrieve, /health, etc.    │    │
+│  │  Listens on: 0.0.0.0:5000                      │    │
+│  │  Handles: /store, /retrieve, /health, etc.     │    │
 │  └────────────────────────────────────────────────┘    │
 │  ┌────────────────────────────────────────────────┐    │
 │  │  Chord DHT Logic                               │    │
@@ -448,9 +448,9 @@ The general components of the program on each VM are:
 │  │  - In-memory dict: self.data = {}              │    │
 │  │  - Keys and values stored here                 │    │
 │  └────────────────────────────────────────────────┘    │
-│                                                          │
-│  Process runs CONTINUOUSLY until killed                 │
-└─────────────────────────────────────────────────────────┘
+│                                                        │
+│  Process runs CONTINUOUSLY until killed                │
+└────────────────────────────────────────────────────────┘
 ```
 And when it is running, the whole process is:
 ```
