@@ -1,7 +1,7 @@
 # Collaborative Document Metadata Store
 Here is an overview of building a Collaborative Document Metadata Store using Chord ring DHT (Distributed Hash Table) on VirtualBox VMs.
 
-The Chord Ring will store document metadata (owner, permissions, version info, etc). Then let's simulate multiple "users" (client programs) that can create/query documents, to demonstrate how Chord can handle concurrent access.
+The Chord Ring will store document metadata (owner, permissions, version info, etc). Then we will simulate multiple "users" (client programs) that can create/query documents, to demonstrate how Chord can handle concurrent access.
 
 Key features to demonstrate:
 - Consistent Hashing: Show how documents are distributed
@@ -13,9 +13,9 @@ Key features to demonstrate:
 ## Big Picture Architecture
 We need 3-4 VMs in the same LAN to build such a Chord ring, to support metadata lookup. 
 
-The metadata will be saved on the VMs. We can build a storage web service for the users to interact with the metadata on the VMs. The implementation of the web service can use Chord ring functionalities to fundamentally peroform low level operations on the VM level storage. 
+The metadata will be saved on the VMs. We can build a storage web service for the users to interact with the metadata on the VMs. The implementation of the web service can use Chord ring functionalities to fundamentally perform low level operations on the VM level storage. 
 
-NAT network can be used on school network to enable different types of connections, e.g., among VMs, between VM and host/LAN, etc. The architecture for such a deployment can be illustrated later in [multi-host deployment section](## Multi-Host Deployment Archtecture) and [port forwarding over NAT network](## How NAT Network Solves Multi-Host). 
+NAT network can be used on school network to enable different types of connections, e.g., among VMs, between VM and host/LAN, etc. The architecture for such a deployment can be illustrated later in [multi-host deployment section](#multi-host-deployment-architecture) and [port forwarding over NAT network](#how-nat-network-solves-multi-host). 
 
 The overall architecture can be illustrated as below:
 
@@ -47,16 +47,16 @@ The overall architecture can be illustrated as below:
 └─────────────────────────────────────────────────────────┘
 ```
 
-## Multi-Host Deployment Archtecture
+## Multi-Host Deployment Architecture
 
-To simulate a fully distributed storage, let's build a multi-host environment: VMs can be scatter over these hosts. In the following deployment archecture, we can have 2-3 hosts in the same LAN. 
+To simulate a fully distributed storage, we will build a multi-host environment: VMs can be scattered over these hosts. In the following deployment architecture, we can have 2-3 hosts in the same LAN. 
 
 ```
 ┌─────────────────────┐      ┌─────────────────────┐      ┌─────────────────────┐
 │   Host Machine 1    │      │   Host Machine 2    │      │   Host Machine 3    │
 │  (Your Laptop)      │      │  (Friend's Laptop)  │      │  (Lab Computer)     │
 ├─────────────────────┤      ├─────────────────────┤      ├─────────────────────┤
-│ chord-node1         │      │ chord-node2         │      │ chord-node3         │
+│      host 1         │      │      host 2         │      │      host 3         │
 │ IP: 192.168.1.101   │      │ IP: 192.168.1.102   │      │ IP: 192.168.1.103   │
 └─────────────────────┘      └─────────────────────┘      └─────────────────────┘
          │                            │                            │
@@ -66,16 +66,16 @@ To simulate a fully distributed storage, let's build a multi-host environment: V
 ```		
 			
 ## How NAT Network Solves Multi-Host
-We need to use 3-4 VMs, and let's assignment them to 2-3 hosts. The following diagram can depicture the layout of the network design. 
+We need to use 3-4 VMs, and we will assign them to 2-3 hosts. The following diagram can depict the layout of the network design. 
 ```
 Host 1 (Your Laptop - 192.168.1.100)          Host 2 (Friend's - 192.168.1.101)
 ┌────────────────────────────────┐            ┌────────────────────────────────┐
 │ NAT Network: "chord-net"       │            │ NAT Network: "chord-net"       │
 │                                │            │                                │
 │ VM1: 10.0.2.4:5000 ───┐        │            │ VM3: 10.0.2.4:5000 ───┐        │
-│                        ├───┐   │            │                        ├───┐   │
-│ VM2: 10.0.2.5:5000 ───┘    │   │            │ VM4: 10.0.2.5:5000 ───┘    │   │
-│                            ↓   │            │                            ↓   │
+│                       ├───┐    │            │                       ├───┐    │
+│ VM2: 10.0.2.5:5000 ───┘   │    │            │ VM4: 10.0.2.5:5000 ───┘   │    │
+│                           ↓    │            │                           ↓    │
 │    Port Forwarding:            │            │    Port Forwarding:            │
 │    Host:5001 → VM1:5000        │            │    Host:5003 → VM3:5000        │
 │    Host:5002 → VM2:5000        │            │    Host:5004 → VM4:5000        │
@@ -86,16 +86,7 @@ Host 1 (Your Laptop - 192.168.1.100)          Host 2 (Friend's - 192.168.1.101)
                     School/Home Network
                        192.168.1.0/24
 ```
-Port forwarding can help us to enable communication among VMs across multiple hosts. For example, the communication from host 1 to VM3 can be achieved by using "host 2 IP + host port 5003", which will be forwarded to "VM3 IP + VM3 port 5000". 
-
-## Quick Start Checklist
-
-We need to make sure the following conditions can be satisfied:
-□ VirtualBox VMs installed on multiple hosts
-□ Python 3.8+ available
-□ At least 2GB RAM free per host
-□ Network connectivity between hosts
-
+Port forwarding can enable communication among VMs across multiple hosts. For example, the communication from host 1 to VM3 can be achieved by using "host 2 IP + host port 5003", which will be forwarded to "VM3 IP + VM3 port 5000". 
 
 ---
 
@@ -113,9 +104,9 @@ Number of VMs: 3-4 nodes for testing
 
 #### **1.1 Configure Node Addresses**
 
-Once the NAT network and port forwarding are ready, then let's put the network info in our configuration that can shared for other programs. 
+Once the NAT network and port forwarding are ready, then we will put the network info in our configuration that can shared for other programs. 
 
-The example can be found in the include py file [shared_config.py](shared_config.py). Please change the CHORD_NODES and BOOTSTRAP_NODE according to your network and VM settings.
+The example can be found in the included python file [shared_config.py](shared_config.py). Please change the CHORD_NODES and BOOTSTRAP_NODE according to your network and VM settings.
 #### **1.2 Create NAT Network **
 
 Please follow the [previous guide for settings of port forwarding](https://github.com/cicc2012/vbox-port-forward). 
@@ -126,7 +117,9 @@ vboxmanage natnetwork modify --netname NatNetwork --port-forward-4 "ssh1:tcp:[]:
 ```
 Access to our host through port 1021 will be directed to port 22 on the guest.
 
-In this project, let's set extra port forwarding rules, illustrated in the [**How NAT Network Solves Multi-Host:**](## How NAT Network Solves Multi-Host) section above. 
+In this project, we will set extra port forwarding rules, illustrated in the [**How NAT Network Solves Multi-Host:**](## How NAT Network Solves Multi-Host) section above. 
+
+We can define VM1 as node 1, VM2 as node 2, VM3 as node 3, and so on so forth. 
 
 **Please make sure the port forwarding rules are consistent with the configuration in [shared_config.py](shared_config.py).**
 
@@ -134,6 +127,7 @@ In this project, let's set extra port forwarding rules, illustrated in the [**Ho
 **Key Points:**
 - Update `host_ip` with actual host IPs on your network
 - Keep `vm_internal_ip` as your NAT Network addresses
+- Nodes: VM1 - node 1, VM2 - node 2, VM3 - node 3, ...
 - Host Ports: 5001, 5002, 5003... 
 - VM Ports: 5000 
 
@@ -168,7 +162,7 @@ sudo apt-get update
 sudo apt-get install -y python3 python3-pip
 pip3 install -r requirements.txt
 ```
-We assume node 1 is the bootstrap node. And then let's deploy the chord node by:
+We assume node 1 is the bootstrap node, and we need to start the deployment on this node. In the terminal of node 1, let's deploy the chord node by:
 ```bash
 python3 chord_node_nat_network.py node1 > node1.log 2>&1 &
 ```
@@ -326,7 +320,7 @@ Concurrent Correctness: 100.0%
 
 ### B.1 shared_config.py
 
-This is the shared config about the VMs with NAT network and port fowarding. It will be copied to all VMs, and serve as the single source of truth, so that there will be no duplicate IP/port definitions, easy to add/remove nodes, consistent across all test scripts, and less error-prone. 
+This is the shared config about the VMs with NAT network and port forwarding. It will be copied to all VMs, and serve as the single source of truth, so that there will be no duplicate IP/port definitions, easy to add/remove nodes, consistent across all test scripts, and less error-prone. 
 
 Just in case you want to use it, you can act like:
 ```python
