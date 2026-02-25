@@ -1,10 +1,9 @@
-# Chord Ring - Collaborative Document Metadata Store
+# Collaborative Document Metadata Store
 Here is an overview of building a Collaborative Document Metadata Store using Chord ring DHT (Distributed Hash Table) on VirtualBox VMs.
 
 The Chord Ring will store document metadata (owner, permissions, version info, etc). Then let's simulate multiple "users" (client programs) that can create/query documents, to demonstrate how Chord can handle concurrent access.
 
-Key Features to Demonstrate
-
+Key features to demonstrate:
 - Consistent Hashing: Show how documents are distributed
 - Scalability: Add/remove nodes dynamically
 - Load Balancing: Show even distribution of data
@@ -12,6 +11,50 @@ Key Features to Demonstrate
 
 
 ## Big Picture Architecture
+We need 3-4 VMs in the same LAN to build such a Chord ring. 
+```mermaid
+graph TD
+    %% Layer 1: Client Application
+    subgraph ClientLayer ["Client Application Layer"]
+        App["Document operations: create, share, query metadata"]
+    end
+
+    %% Layer 2: Chord Ring
+    subgraph ChordRing ["Chord Ring (VirtualBox VMs)"]
+        direction TB
+        subgraph Nodes [" "]
+            direction LR
+            N1["Node 1<br/>ID:5"] --> N2["Node 2<br/>ID:15"]
+            N2 --> N3["Node 3<br/>ID:30"]
+            N3 --> N4["Node 4<br/>ID:50"]
+        end
+        Finger["Finger tables for O(log N) lookup"]
+    end
+
+    %% Layer 3: Storage
+    subgraph StorageLayer ["Storage Layer"]
+        Storage["Key: hash(doc_id) → Value: {metadata JSON}"]
+    end
+
+    %% Layer 4: Network
+    subgraph NetworkLayer ["Network Layer (NAT Network)"]
+        Net["Multi-Host Support | Port Forwarding | School Network Safe"]
+    end
+
+    %% Connections between layers
+    App --> Nodes
+    Nodes --> Finger
+    Finger --> Storage
+    Storage --> Net
+
+    %% Styling for clarity
+    style ClientLayer fill:#f9f,stroke:#333,stroke-width:2px
+    style ChordRing fill:#e1f5fe,stroke:#01579b,stroke-width:2px
+    style StorageLayer fill:#fff9c4,stroke:#fbc02d,stroke-width:2px
+    style NetworkLayer fill:#c8e6c9,stroke:#2e7d32,stroke-width:2px
+
+```
+
 ```
 ┌─────────────────────────────────────────────────────────┐
 │              Client Application Layer                   │
