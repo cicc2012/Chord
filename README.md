@@ -164,7 +164,7 @@ pip3 install -r requirements.txt
 ```
 We assume node 1 is the bootstrap node, and we need to start the deployment on this node. In the terminal of node 1, let's deploy the chord node by:
 ```bash
-python3 chord_node_nat_network.py node1 > node1.log 2>&1 &
+python3 chord_node_nat_network.py node1 > node1.log 2>&1
 ```
 This will run the node1 silently without cluttering the terminal. Change node1 accordingly for other VM.
 
