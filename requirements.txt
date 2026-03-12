@@ -1,0 +1,5 @@
+# requirements.txt
+flask==2.3.0
+requests==2.31.0
+matplotlib==3.7.1  # Only for visualization
+numpy==1.24.3      # Only for visualization
